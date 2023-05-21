@@ -6,6 +6,5 @@ pandas==1.5.3
 Pillow==9.5.0
 plotly==5.13.1
 pygbif==0.6.2
-Requests==2.30.0
-Shapely==2.0.1
-streamlit==1.20.0
+requests==2.30.0
+shapely==2.0.1
