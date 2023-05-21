@@ -145,7 +145,7 @@ def create_map_eco_regions(df, geo_occ_df):
     # Add a Marker layer with the points
             folium.Circle(radius=200,
                  location=(row.decimalLatitude,row.decimalLongitude),
-                 popup=Popup(row.species + " " + str(row.year) + " " + row.country),
+                 popup=Popup(row.species + " "+row.country),
                  color = colormap(row.year),
                  legend_name='year',
                  fill=True).add_to(map)
@@ -153,7 +153,7 @@ def create_map_eco_regions(df, geo_occ_df):
         else :
              folium.Circle(radius=200,
              location=(row.decimalLatitude,row.decimalLongitude),
-             popup=Popup(row.species),
+             popup=Popup(row.species + + " "+row.country),
              color = 'blue',
              fill=True).add_to(map)
              
