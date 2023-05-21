@@ -33,8 +33,8 @@ def local_css(file_name):
 
 # Chargement des éco-regions
 
-path_to_eco_regions_csv = "data\eco-regions-simplified.csv" 
-path_to_cixiidae_flow_csv = "data\cixiidae_flow.csv"
+path_to_eco_regions_csv = "data/eco-regions-simplified.csv" 
+path_to_cixiidae_flow_csv = "data/cixiidae_flow.csv"
  
 
 features_to_keep = ['key', 'basisOfRecord', 'individualCount', 'scientificName', 'acceptedScientificName', 'kingdom', 'phylum',
