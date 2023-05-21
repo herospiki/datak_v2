@@ -157,7 +157,7 @@ def hc_header():
 
 def hc_sidebar():
     st.sidebar.header('Cixiidae')
-    image = Image.open('images\cixiidae.png')
+    image = Image.open('images/cixiidae.png')
     st.sidebar.image(image)
     st.sidebar.markdown('Data For Good')
     st.sidebar.markdown(
