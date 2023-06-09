@@ -8,6 +8,7 @@ import branca.colormap as cm
 import pandas as pd
 import geopandas as gpd
 import numpy as np
+import random
 
 # Fonction de recherche à partir d'un nom d'espèce ou de genre
 # rank = species ou genus ou family
@@ -65,20 +66,20 @@ def find_eco_regions(geo_occ_df, eco_regions_df):
         df = pointsInEcoregions[['ECO_NAME', 'ECO_ID']].merge(eco_regions_df[['ECO_ID','geometry']], on='ECO_ID', how='left')
         return df
 
-def find_eco_regions_for_flow_species(flow_df, eco_regions_df):
-    flow_df = flow_df.drop_duplicates()
-    if (flow_df.size > 0) :
-        geometry = [Point(xy) for xy in zip(flow_df['longitude'], flow_df['latitude'])]
-        flow_occ_df = gpd.GeoDataFrame(flow_df, #specify our data
-                        geometry=geometry, crs=eco_regions_df.crs) #specify the geometry list we create
-    # Trouver les éco-régions auxquelles appartiennent les occurrences (avec leurs coordonnées GPS)
-        pointsInEcoregions = gpd.sjoin( flow_occ_df, eco_regions_df, predicate="within", how='left')
-        pointsInEcoregions['species'] = pointsInEcoregions['species'].fillna('Unknown species')
-        pointsInEcoregions['genus'] = pointsInEcoregions['genus'].fillna('Unknown genus')
-        pointsInEcoregions['ECO_NAME'] = pointsInEcoregions['ECO_NAME'].fillna('Eco-region not identified')
-        pointsInEcoregions['ECO_ID'] = pointsInEcoregions['ECO_ID'].fillna(0)
-        df = pointsInEcoregions[['ECO_NAME', 'ECO_ID']].merge(eco_regions_df[['ECO_ID','geometry']], on='ECO_ID', how='left')
-        return pointsInEcoregions, df
+
+# ISO_Code	Level_4_Na	Level4_cod	Level4_2	Level3_cod	Level2_cod	Level1_cod	geometry
+
+def find_phyto_regions(geo_occ_df, tdwg_level4):
+    geo_occ_df = geo_occ_df.drop_duplicates()
+    if (geo_occ_df.size > 0) :
+    # Trouver les zones tdwg auxquelles appartiennent les occurrences (avec leurs coordonnées GPS)
+        pointsInTDWG = gpd.sjoin(geo_occ_df, tdwg_level4, predicate="within", how='left')
+        pointsInTDWG['species'] = pointsInTDWG['species'].fillna('Unknown species')
+        pointsInTDWG['genus'] = pointsInTDWG['genus'].fillna('Unknown genus')
+        pointsInTDWG['Level_4_Na'] = pointsInTDWG['Level_4_Na'].fillna('TDWG not identified')
+        pointsInTDWG['Level4_cod'] = pointsInTDWG['Level4_cod'].fillna('None')
+        df = pointsInTDWG[['Level_4_Na', 'Level4_cod']].merge(tdwg_level4[['Level4_cod','geometry']], on='Level4_cod', how='left')
+        return df
 
 def get_center_coordinate(coordinates):
  
@@ -96,7 +97,7 @@ def get_triangle_center(vertices):
 
     return avg_latitude, avg_longitude
 
-def get_centroid(points):  
+def get_map_center(points):  
     # Extract (latitude, longitude) tuples from dataframe
     lat_lon_list = list(zip(points['decimalLatitude'].tolist(), points['decimalLongitude'].tolist()))
     if len(lat_lon_list) == 1 :
@@ -106,16 +107,17 @@ def get_centroid(points):
     if len(lat_lon_list) == 3 :
         return get_triangle_center(lat_lon_list)   
     else : 
-        poly = Polygon(lat_lon_list)
-        print(centroid(poly))
-        return centroid(poly).y, centroid(poly).x
+        # Return a random element
+        random_center = random.choice(lat_lon_list)
+        return random_center[1], random_center[0]
 
 
 def create_map_eco_regions(df, geo_occ_df):
     # Adapter le code pour le cas où on a des milliers d'occurrences...
 
-    # Calculer le centroïde des points pour centrer la carte d'emblée 
-    lat,long =  get_centroid(geo_occ_df)
+    # centrer la carte d'emblée 
+    geo_occ_df['year'] = geo_occ_df['year'].fillna(2023)
+    lat,long =  get_map_center(geo_occ_df)
     min_year = geo_occ_df['year'].min()
     max_year = geo_occ_df['year'].max()
     map = folium.Map(location=[lat, long], zoom_start=4)
