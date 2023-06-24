@@ -1,5 +1,3 @@
-import random
-
 import branca.colormap as cm
 import folium
 import geopandas as gpd

@@ -90,11 +90,7 @@ def load_tdwg_regions(path_tdwg_maps):
 @st.cache_resource # 👈 Add the caching decorator
 def load_mapping_tdwg_eco_regions(path_data):
     mapping_level4_df = pd.read_csv(path_data+"mapping_tdwg_level4_eco_regions.csv")
-    mapping_level3_df = pd.read_csv(path_data+"mapping_tdwg_level3_eco_regions.csv")
-    mapping_level2_df = pd.read_csv(path_data+"mapping_tdwg_level2_eco_regions.csv")
     mapping_data = dict()
-    mapping_data['tdwg_level2'] = mapping_level2_df
-    mapping_data['tdwg_level3'] = mapping_level3_df
     mapping_data['tdwg_level4'] = mapping_level4_df
     return mapping_data
 
@@ -110,6 +106,7 @@ flow_df = load_flow_data(path_to_cixiidae_flow_csv)
 tdwg_data = load_tdwg_regions(path_tdwg_maps)
 mapping_data = load_mapping_tdwg_eco_regions(path_data)
 list_genus = list(set(flow_df['genus'].values))
+
 
 st.session_state['genus'] = 0
 st.session_state['species'] = 0

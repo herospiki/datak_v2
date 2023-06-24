@@ -72,6 +72,7 @@ def find_eco_regions(geo_occ_df, eco_regions_df):
     geo_occ_df = geo_occ_df.drop_duplicates()
     if (geo_occ_df.size > 0):
         # Trouver les éco-régions auxquelles appartiennent les occurrences (avec leurs coordonnées GPS)
+        # Overlaps ?
         pointsInEcoregions = gpd.sjoin(
             geo_occ_df, eco_regions_df, predicate="within", how='left')
         pointsInEcoregions['species'] = pointsInEcoregions['species'].fillna(
@@ -167,7 +168,7 @@ def create_map_eco_regions(df, geo_occ_df):
 
     # centrer la carte d'emblée
     geo_occ_df['year'] = geo_occ_df['year'].fillna(
-        2024)  # Année non documentée
+        0)  # Année non documentée
     # lat,long =  get_map_center(geo_occ_df)
     min_year = geo_occ_df['year'].min()
     max_year = geo_occ_df['year'].max()
@@ -188,13 +189,28 @@ def create_map_eco_regions(df, geo_occ_df):
 
     colormap = cm.LinearColormap(colors=['red', 'yellow', 'green'],
                                  vmin=min_year, vmax=max_year)
+    #colormap_records = cm.StepColormap
+    # eco-regions
+
     for row in df.itertuples():
         if row.geometry != None:
-            folium.GeoJson(row.geometry, name=row.ECO_NAME,
+            folium.GeoJson(row.geometry, 
+                           name=row.ECO_NAME,
                            style_function=style_function,
                            highlight_function=highlight_function,
                            popup=Popup(row.ECO_NAME)).add_to(map)
+    # TDWG 
 
+    '''for row in df.itertuples():
+        if row.geometry != None:
+            folium.GeoJson(row.geometry, 
+                           name=row.ECO_NAME,
+                           style_function=style_function,
+                           highlight_function=highlight_function,
+                           popup=Popup(row.ECO_NAME)).add_to(map)'''
+  
+    #  Occurrences 
+     
     for row in geo_occ_df.itertuples(index=False):
         if (row.year != np.nan):
             # print(row)
