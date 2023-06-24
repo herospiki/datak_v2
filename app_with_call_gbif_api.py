@@ -70,11 +70,11 @@ def load_eco_regions(path_to_eco_regions_csv):
 
 @st.cache_resource # 👈 Add the caching decorator
 def load_tdwg_regions(path_tdwg_maps):
-    with open(path_tdwg_maps+"\level1.geojson") as geojsonfile :
+    with open(path_tdwg_maps+"/level1.geojson") as geojsonfile :
         tdwg_level1 = gpd.read_file(geojsonfile)
-    with open(path_tdwg_maps+"\level2.geojson") as geojsonfile :
+    with open(path_tdwg_maps+"/level2.geojson") as geojsonfile :
         tdwg_level2 = gpd.read_file(geojsonfile)
-    with open(path_tdwg_maps+"\level3.geojson") as geojsonfile :
+    with open(path_tdwg_maps+"/level3.geojson") as geojsonfile :
         tdwg_level3 = gpd.read_file(geojsonfile)
     with open(path_tdwg_maps+"/level4.geojson") as geojsonfile :
         tdwg_level4 = gpd.read_file(geojsonfile)
