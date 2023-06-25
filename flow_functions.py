@@ -53,10 +53,10 @@ def find_phyto_regions_for_flow_species(species, flow_expanded_df):
 
 
 def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
+    print(level4_cod_values)
     eco_regions_df['ECO_ID'] = eco_regions_df['ECO_ID'].astype('str')
-    tdwg_layer = folium.FeatureGroup(name='tdwg', show=False)
-    eco_regions_layer = folium.FeatureGroup(name='eco', show=False)
-    print(eco_id_list)
+    tdwg_layer = folium.FeatureGroup(name='TDWG regions', show=True)
+    eco_regions_layer = folium.FeatureGroup(name='WWF eco-regions', show=False)
 
     # Plot tdwg
     tdwg_level4 = tdwg_data['tdwg_level4']

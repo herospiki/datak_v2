@@ -45,16 +45,9 @@ def build_geo_df(dict_results, features_to_keep, crs):
             return pd.DataFrame()
         else:
             # Toutes les colonnes ne sont pas présentes à chaque fois...
-            print(df_results)
             df_results = df_results.reindex(columns=features_to_keep)
-            print('length')
-            print(len(df_results))
             partial_data_df = df_results[features_to_keep]
-            print(partial_data_df)
             partial_data_df = partial_data_df.drop_duplicates()
-            print(partial_data_df)
-            print("keys")
-            print(set(partial_data_df['key']))
 
             # Suppression des coordonnées à (0,0)
             partial_data_df = partial_data_df[(partial_data_df['decimalLongitude'] != 0)
@@ -103,7 +96,6 @@ def find_phyto_regions(geo_occ_df, tdwg_level4):
         pointsInTDWG['Level_4_Na'] = pointsInTDWG['Level_4_Na'].fillna(
             'TDWG not identified')
         pointsInTDWG['Level4_cod'] = pointsInTDWG['Level4_cod'].fillna('None')
-        # df = pointsInTDWG.drop(columns='geometry').merge(tdwg_level4[['Level4_cod','geometry']], on='Level4_cod', how='left')
         df = pointsInTDWG.drop(columns='geometry').merge(
             exploded[['Level4_cod', 'geometry']], on='Level4_cod', how='left')
         return df
@@ -161,74 +153,95 @@ def get_map_center(points):
 
 # Le mieux est de laisser l'année de côté pour le moment, et plutôt de compter les occurrences
 # suivant le basisOfrecord une fois qu'on a les zones
+def color_producer(basisOfrecord):
+    if basisOfrecord == 'HUMAN_OBSERVATION':
+        return 'green'
+    elif basisOfrecord == 'OCCURRENCE':
+        return 'blue'
+    elif basisOfrecord == 'PRESERVED_SPECIMEN':
+        return 'red'
+    elif basisOfrecord == 'MATERIAL_SAMPLE':
+        return 'black'
+    else : 
+        return 'gray'
 
 
-def create_map_eco_regions(df, geo_occ_df):
-    # Adapter le code pour le cas où on a des milliers d'occurrences...
 
+def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_found_df, geo_occ_df):
+
+    tdwg_regions = tdwg_regions_gbif_found_df[['Level_4_Na','Level4_cod','geometry']]
+   
     # centrer la carte d'emblée
-    geo_occ_df['year'] = geo_occ_df['year'].fillna(
-        0)  # Année non documentée
+    lat,long =  get_map_center(geo_occ_df)
+    print(geo_occ_df['basisOfRecord'].unique())
+
+    geo_occ_df['year'] = geo_occ_df['year'].fillna('year unknown')  # Année non documentée
     # lat,long =  get_map_center(geo_occ_df)
-    min_year = geo_occ_df['year'].min()
-    max_year = geo_occ_df['year'].max()
-   # map = folium.Map(location=[lat, long], zoom_start=4)
-    map = folium.Map(location=[0, 0], zoom_start=2)
-
-    def style_function(x): return {'fillColor': '#ffffff',
-                                   'color': '#000000',
-                                   'fillOpacity': 1,
-                                   'weight': 1}
-
-    def highlight_function(x): return {'fillColor': '#000000',
-                                       'color': '#000000',
-                                       'fillOpacity': 0.50,
-                                       'weight': 0.1}
+   # min_year = geo_occ_df['year'].min()
+    #max_year = geo_occ_df['year'].max()
+    map = folium.Map(location=[lat, long], zoom_start=4)
+    #map = folium.Map(location=[0, 0], zoom_start=2)
 
     # Add a GeoJson layer with the polygons : list of eco-regions['ECO_NAME','geometry']
 
-    colormap = cm.LinearColormap(colors=['red', 'yellow', 'green'],
-                                 vmin=min_year, vmax=max_year)
+    #colormap = cm.LinearColormap(colors=['red', 'yellow', 'green'],
+    #                             vmin=min_year, vmax=max_year)
     #colormap_records = cm.StepColormap
-    # eco-regions
-
-    for row in df.itertuples():
-        if row.geometry != None:
-            folium.GeoJson(row.geometry, 
-                           name=row.ECO_NAME,
-                           style_function=style_function,
-                           highlight_function=highlight_function,
-                           popup=Popup(row.ECO_NAME)).add_to(map)
-    # TDWG 
-
-    '''for row in df.itertuples():
-        if row.geometry != None:
-            folium.GeoJson(row.geometry, 
-                           name=row.ECO_NAME,
-                           style_function=style_function,
-                           highlight_function=highlight_function,
-                           popup=Popup(row.ECO_NAME)).add_to(map)'''
   
     #  Occurrences 
      
     for row in geo_occ_df.itertuples(index=False):
-        if (row.year != np.nan):
-            # print(row)
-            # Add a Marker layer with the points
-            folium.Circle(radius=200,
-                          location=(row.decimalLatitude, row.decimalLongitude),
-                          popup=Popup(row.species + " "+row.country),
-                          color=colormap(row.year),
-                          legend_name='year',
-                          fill=True).add_to(map)
+    
+        folium.Circle(radius=200,
+                    location=(row.decimalLatitude, row.decimalLongitude),
+                    popup=Popup(row.species + " "+row.country + " " + row.basisOfRecord + " "+ str(row.year)),
+                    color= color_producer(row.basisOfRecord),
+                    fill=True).add_to(map)
 
-        else:
-            folium.Circle(radius=200,
-                          location=(row.decimalLatitude, row.decimalLongitude),
-                          popup=Popup(row.species + + " "+row.country),
-                          color='blue',
-                          fill=True).add_to(map)
 
-    colormap.caption = 'Year of occurrence'
-    colormap.add_to(map)
+     # TDWG 
+    tdwg_layer = folium.FeatureGroup(name='TDWG regions', show=False) 
+    eco_regions_layer = folium.FeatureGroup(name='WWF eco-regions', show=False)
+    # Plot tdwg
+   
+    for i,row in tdwg_regions.iterrows():
+        print(row)
+     
+        tdwg_geo = folium.GeoJson(row.geometry,
+                                  style_function=lambda x: {'fillColor': '#ffffff',
+                                                            'color': '#000000',
+                                                            'fillOpacity': 1,
+                                                            'weight': 1},
+                                  highlight_function=lambda x: {'fillColor': '#000000',
+                                                                'color': '#000000',
+                                                                'fillOpacity': 0.50,
+                                                                'weight': 0.1}
+                              
+                                  )
+    # Add popup with line description
+        Popup(row.Level_4_Na).add_to(tdwg_geo)
+
+        # Add the feature to the appropriate layer
+        tdwg_geo.add_to(tdwg_layer)
+
+    for row in eco_regions_found_df.itertuples():
+        if row.geometry != None:
+            eco_geo = folium.GeoJson(row.geometry, 
+                           name=row.ECO_NAME,
+                           style_function=lambda x: {'fillColor': '#ffffff',
+                                                    'color': '#000000',
+                                                    'fillOpacity': 1,
+                                                    'weight': 1},
+                            highlight_function=lambda x: {'fillColor': '#000000',
+                                                        'color': '#000000',
+                                                        'fillOpacity': 0.50,
+                                                        'weight': 0.1}
+                                                        )
+            Popup(row.ECO_NAME).add_to(eco_geo)
+
+            eco_geo.add_to(eco_regions_layer)
+  
+    tdwg_layer.add_to(map)
+    eco_regions_layer.add_to(map)
+    folium.LayerControl(collapsed=False).add_to(map)
     return map

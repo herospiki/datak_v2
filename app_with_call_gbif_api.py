@@ -117,14 +117,16 @@ def on_genus_change():
     st.write(st.session_state['species'])
 
 # Choix du genre
-def panel_choix_genus(key):
+def panel_choix_genus(debug_mode):
     with st.container() :
         if (st.session_state['genus'] == 0) :
             idx = 0
         else :
             idx = st.session_state.list_genus.index(st.session_state['genus'])
       
-        selected_genus = st.selectbox(label='Genre', index=idx, options= st.session_state.list_genus, key='genus')
+        selected_genus = st.selectbox(label='Genus', index=idx, options= st.session_state.list_genus, key='genus')
+        if (debug_mode) :
+            st.write(selected_genus)
         st.session_state.list_species = list(set(flow_df[flow_df['genus'] == st.session_state['genus']]['species'].values))
         st.session_state['species'] = 0
         return selected_genus
@@ -144,7 +146,7 @@ def panel_gbif_choix_species(debug_mode):
             if debug_mode :
                 st.write(st.session_state.list_species)
                 st.write(idx)
-            searched_gbif_name = st.selectbox(label='Espèce', index = idx,options= st.session_state.list_species, key='other')
+            searched_gbif_name = st.selectbox(label='Species', index = idx,options= st.session_state.list_species, key='other')
             #searched_gbif_name = st.selectbox(label='Espèce', index = idx,options= st.session_state.list_species, key='species')
             submitted_gbif = st.form_submit_button("Let's have a look")
             if submitted_gbif :
@@ -177,7 +179,6 @@ def panel_flow_choix_species(debug_mode):
     eco_regions_list=[]
     flow_occ_df = pd.DataFrame()
     with st.container():
-        # Pour flow, on va plutôt se focaliser sur les phyto regions (tdwg)
         tdwg_regions_flow= ff.find_phyto_regions_for_flow_species(st.session_state['species'], flow_df)
         true_columns_dict, eco_regions_list = ff.get_level4_eco_id_list(mapping_data['tdwg_level4'], tdwg_regions_flow)
         liste = set(eco_regions_list)
@@ -248,8 +249,8 @@ def panel_flow_comment(eco_regions_flow_found_df):
     return eco_regions_flow_found_df
 
 
-def show_gbif_map(eco_regions_found_df,geo_occ_df):
-    map = mf.create_map_eco_regions(eco_regions_found_df,geo_occ_df)
+def show_gbif_map(tdwg_regions_gbif_found_df, eco_regions_found_df,geo_occ_df):
+    map = mf.create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df,eco_regions_found_df,geo_occ_df)
     with st.container():
         map_html = map._repr_html_()
         st.components.v1.html(map_html, height=900, width=1000)
@@ -291,14 +292,14 @@ def hc_body():
     tab1, tab2 = st.tabs(
         ["Ask GBIF ", "then ask Flow"])
     with tab1:
-        genus = panel_choix_genus('selected_gif_genus')
-        print(genus)
+        res = panel_choix_genus(debug_mode)
+        print(res)
         st.session_state.list_species = list(set(flow_df[flow_df['genus'] == st.session_state['genus']]['species'].values))
         eco_regions_gbif_found_df, tdwg_regions_gbif_found_df, geo_gbif_occ_df = \
             panel_gbif_choix_species(debug_mode)
         if (eco_regions_gbif_found_df.size != 0) : 
             panel_gbif_comment(geo_gbif_occ_df, eco_regions_gbif_found_df, tdwg_regions_gbif_found_df)
-            show_gbif_map(eco_regions_gbif_found_df, geo_gbif_occ_df)
+            show_gbif_map(tdwg_regions_gbif_found_df, eco_regions_gbif_found_df, geo_gbif_occ_df)
 
     with tab2:
         ### Ici 
