@@ -223,7 +223,7 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
 
         # Add the feature to the appropriate layer
         tdwg_geo.add_to(tdwg_layer)
-
+        
     for row in eco_regions_found_df.itertuples():
         if row.geometry != None:
             eco_geo = folium.GeoJson(row.geometry, 

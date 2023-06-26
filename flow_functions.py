@@ -57,7 +57,8 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
     tdwg_layer = folium.FeatureGroup(name='TDWG regions', show=True)
     eco_regions_layer = folium.FeatureGroup(name='WWF eco-regions', show=False)
 
-    # Plot tdwg
+    # Plot tdwg 
+    
     tdwg_level4 = tdwg_data['tdwg_level4']
     for i, r in tdwg_level4[tdwg_level4['Level4_cod'].isin(level4_cod_values)].iterrows():
         # Convert the Polygon or LineString to geoJSON format
