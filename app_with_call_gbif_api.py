@@ -158,7 +158,6 @@ def panel_gbif_choix_species(debug_mode):
 
 
 def panel_flow_choix_species(debug_mode):
-    rank = 'species'
     tdwg_regions_flow=[]
     eco_regions_list=[]
     flow_occ_df = pd.DataFrame()
@@ -333,13 +332,13 @@ def hc_body(debug_mode):
               st.markdown("No species selected yet")
         else : 
             sp = st.session_state['species']
-            line = "Occurences of :red["+  sp + "] documented in FLOW "
+            line = "Locations of occurences of :red["+  sp + "] documented in FLOW (TDWG)"
             st.markdown(line)
             tdwg_regions_flow, eco_regions_list, flow_occ_df = panel_flow_choix_species(debug_mode)
             if (len(tdwg_regions_flow)!=0):
                 show_flow_map(tdwg_regions_flow, eco_regions_list)
             else : 
-                st.markdown('No level 4 TDWG regions was found')
+                st.markdown('No level 4 TDWG region was found')
    
 
        # if (eco_regions_flow_found_df.size != 0): 

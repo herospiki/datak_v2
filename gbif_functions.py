@@ -208,11 +208,11 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
         print(row)
      
         tdwg_geo = folium.GeoJson(row.geometry,
-                                  style_function=lambda x: {'fillColor': '#ffffff',
+                                  style_function=lambda x: {'fillColor': '#99adc2',
                                                             'color': '#000000',
-                                                            'fillOpacity': 1,
+                                                            'fillOpacity': 0.5,
                                                             'weight': 1},
-                                  highlight_function=lambda x: {'fillColor': '#000000',
+                                  highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
                                                                 'fillOpacity': 0.50,
                                                                 'weight': 0.1}
@@ -228,11 +228,11 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
         if row.geometry != None:
             eco_geo = folium.GeoJson(row.geometry, 
                            name=row.ECO_NAME,
-                           style_function=lambda x: {'fillColor': '#ffffff',
+                           style_function=lambda x: {'fillColor': '#17a86c',
                                                     'color': '#000000',
-                                                    'fillOpacity': 1,
+                                                    'fillOpacity': 0.5,
                                                     'weight': 1},
-                            highlight_function=lambda x: {'fillColor': '#000000',
+                            highlight_function=lambda x: {'fillColor': '#ececec',
                                                         'color': '#000000',
                                                         'fillOpacity': 0.50,
                                                         'weight': 0.1}

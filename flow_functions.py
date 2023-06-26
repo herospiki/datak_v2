@@ -64,11 +64,11 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
         geo_json = gpd.GeoSeries(r['geometry']).simplify(
             tolerance=0.000001).to_json()
         geo_json = folium.GeoJson(data=geo_json,
-                                  style_function=lambda x: {'fillColor': '#ffffff',
+                                  style_function=lambda x: {'fillColor': '#99adc2', 
                                                             'color': '#000000',
-                                                            'fillOpacity': 1,
+                                                            'fillOpacity': 0.5,
                                                             'weight': 1},
-                                  highlight_function=lambda x: {'fillColor': '#000000',
+                                  highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
                                                                 'fillOpacity': 0.50,
                                                                 'weight': 0.1},
@@ -86,11 +86,11 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
         geo_json = gpd.GeoSeries(r['geometry']).simplify(
             tolerance=0.000001).to_json()
         geo_json = folium.GeoJson(data=geo_json,
-                                  style_function=lambda x: {'fillColor': '#ffffff',
+                                  style_function=lambda x: {'fillColor': '#17a86c',
                                                             'color': '#000000',
-                                                            'fillOpacity': 1,
+                                                            'fillOpacity': 0.5,
                                                             'weight': 1},
-                                  highlight_function=lambda x: {'fillColor': '#000000',
+                                  highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
                                                                 'fillOpacity': 0.50,
                                                                 'weight': 0.1})
