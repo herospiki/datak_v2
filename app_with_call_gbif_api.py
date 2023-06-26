@@ -22,7 +22,7 @@ import plotly.express as px
 # Initial page config
 
 st.set_page_config(
-    page_title='GBIF',
+    page_title='Fulgores',
     layout="wide",
     #initial_sidebar_state="collapsed",
 )
@@ -32,16 +32,6 @@ def local_css(file_name):
         st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
 #local_css("style.css")
-
-# Initialisation des variables de session
-
-# Initialisation
-
-if 'genus' not in st.session_state:
-    st.session_state['genus'] = 0
-
-if 'species' not in st.session_state:
-    st.session_state['species'] = 0
 
 
 # Chargement des éco-regions
@@ -111,15 +101,10 @@ mapping_data = load_mapping_tdwg_eco_regions(path_data)
 list_genus = list(set(flow_df['genus'].values))
 st.session_state.list_genus = list_genus
 
-
-def on_genus_change():
-    st.write(st.session_state['genus'])
-    st.write(st.session_state['species'])
-
 # Choix du genre
 def panel_choix_genus(debug_mode):
     with st.container() :
-        if (st.session_state['genus'] == 0) :
+        if 'genus' not in st.session_state :
             idx = 0
         else :
             idx = st.session_state.list_genus.index(st.session_state['genus'])
@@ -128,7 +113,7 @@ def panel_choix_genus(debug_mode):
         if (debug_mode) :
             st.write(selected_genus)
         st.session_state.list_species = list(set(flow_df[flow_df['genus'] == st.session_state['genus']]['species'].values))
-        st.session_state['species'] = 0
+   
         return selected_genus
     
 # Choix de l'espèce pour les recherches GBIF
@@ -139,7 +124,7 @@ def panel_gbif_choix_species(debug_mode):
     gbif_occ_df = pd.DataFrame()
     with st.container() :
         with st.form('species gbif selection'):
-            if (st.session_state['species'] == 0):
+            if 'species' not in st.session_state :
                 idx = 0
             else :
                 idx = st.session_state.list_species.index(st.session_state['species'])
@@ -147,7 +132,6 @@ def panel_gbif_choix_species(debug_mode):
                 st.write(st.session_state.list_species)
                 st.write(idx)
             searched_gbif_name = st.selectbox(label='Species', index = idx,options= st.session_state.list_species, key='other')
-            #searched_gbif_name = st.selectbox(label='Espèce', index = idx,options= st.session_state.list_species, key='species')
             submitted_gbif = st.form_submit_button("Let's have a look")
             if submitted_gbif :
                 st.write('You selected:',  searched_gbif_name) 
@@ -264,33 +248,76 @@ def show_flow_map(level4_cod_values, eco_id_list):
 
 
 def hc_header():
-    
-    st.header('Animalia | Arthropoda | Insecta | Hemiptera | Cixiidae')
-    st.header('GBIF | Global Biodiversity Information Facility occurrences and WWF eco-regions')
-    #st.image()
-    st.markdown('**Data For Good**')
+    st.header('Animalia | Arthropoda | Insecta | Hemiptera ')
+    st.subheader('Auchenorrhyncha | Fulgoromorpha | Fulgoroidea | Cixiidae', help='https://fr.wikipedia.org/wiki/Cixiidae')
     st.write('-----------------')
-    if st.button("Clear All"):
-    # Clears all st.cache_resource caches:
-        st.cache_resource.clear()
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        with st.expander(label = "About GBIF") :
+            st.markdown("GBIF—the Global Biodiversity Information Facility—is an international network and data infrastructure \
+                    funded by the world's governments and aimed at providing anyone, anywhere, open access to data about all \
+                    types of life on Earth : https://www.gbif.org/fr/, https://www.gbif.org/ ")
+
+    with col2:
+        with st.expander(label = 'About FLOW'): 
+            st.markdown("Fulgoromorpha Lists On the Web : A knowledge and a taxonomy database dedicated to \
+                        planthoppers (Insecta, Hemiptera, Fulgoromorpha, Fulgoroidea, https://flow.hemiptera-databases.org/flow/?&lang=fr, https://flow.hemiptera-databases.org/flow/?&lang=en") 
+  
+
+    with col3:
+        with st.expander(label = 'About TDWG'): 
+            st.markdown("Historically known as the Taxonomic Databases Working Group, today’s Biodiversity Information Standards \
+                        (TDWG) is a not-for-profit, scientific and educational association formed to establish international \
+                        collaboration among the creators, managers and users of biodiversity information and to promote the wider \
+                        and more effective dissemination and sharing of knowledge about the world’s heritage of biological organisms, https://www.tdwg.org/")
+
+    with col4:
+        with st.expander(label='About eco-regions') :
+            st.markdown("They are biogeographic classifications from the WWF. An ecoregion is a recurring pattern of ecosystems associated with characteristic combinations of soil and \
+                        landform that characterise that region, https://fr.wikipedia.org/wiki/%C3%89cor%C3%A9gion, https://en.wikipedia.org/wiki/Ecoregion")
+
+   # https://www.gbif.org/fr/
+   # https://www.gbif.org/ 
+
+   # https://flow.hemiptera-databases.org/flow/?&lang=en
+   # https://flow.hemiptera-databases.org/flow/?&lang=fr
+
+    #https://www.tdwg.org/ 
+    #
+
+    #https://en.wikipedia.org/wiki/Ecoregion 
+    #https://fr.wikipedia.org/wiki/%C3%89cor%C3%A9gion
+    #st.image()
+ 
+    st.write('-----------------')
+
+
+ 
 
     #https://www.gbif.org/occurrence/map?has_coordinate=true&has_geospatial_issue=false&taxon_key=8470
 
     #GBIF.org (19 May 2023) GBIF Occurrence Download https://doi.org/10.15468/dl.86cbu4 
 
 def hc_sidebar():
-    st.sidebar.header('Cixiidae')
+    st.sidebar.header('Data For Good')
+    image = Image.open('images/logo-dfg-new2.png')
+    st.sidebar.image(image, caption='Data For Good', width=100)
+    st.sidebar.subheader('Cixiidae') 
+    image = Image.open('images/Tachycixius venustulus (Streifen-Glasflügelzikade)M1.2.jpg')
+    st.sidebar.image(image, caption='Tachycixius venustulus')
     image = Image.open('images/Pentastiridius leporinus (Schilf-Glasflügelzikade)W1.2.jpg')
     st.sidebar.image(image, caption='Pentastiridius leporinus')
-    st.sidebar.markdown('Data For Good')
-    st.sidebar.markdown(
-        '''Link to Streamlit doc :  https://docs.streamlit.io/''')
-    
-def hc_body():
-    debug_mode = st.checkbox('debug mode')
+  
+    debug_mode = st.sidebar.checkbox('debug mode')
+    if st.sidebar.button("Clear Cache"):
+        # Clears all st.cache_resource caches:
+        st.cache_resource.clear()
+    return debug_mode
 
+def hc_body(debug_mode):
     tab1, tab2 = st.tabs(
-        ["Ask GBIF ", "then ask Flow"])
+        ["Ask GBIF ", "▶️ then ask FLOW"])
     with tab1:
         res = panel_choix_genus(debug_mode)
         print(res)
@@ -300,27 +327,30 @@ def hc_body():
         if (eco_regions_gbif_found_df.size != 0) : 
             panel_gbif_comment(geo_gbif_occ_df, eco_regions_gbif_found_df, tdwg_regions_gbif_found_df)
             show_gbif_map(tdwg_regions_gbif_found_df, eco_regions_gbif_found_df, geo_gbif_occ_df)
-
     with tab2:
         ### Ici 
-        sp = st.session_state['species']
-        if (sp != 0) : 
+        if 'species' not in st.session_state : 
+              st.markdown("No species selected yet")
+        else : 
+            sp = st.session_state['species']
             line = "Occurences of :red["+  sp + "] documented in FLOW "
             st.markdown(line)
             tdwg_regions_flow, eco_regions_list, flow_occ_df = panel_flow_choix_species(debug_mode)
             if (len(tdwg_regions_flow)!=0):
                 show_flow_map(tdwg_regions_flow, eco_regions_list)
-        else : 
-            st.markdown("No species selected yet")
+            else : 
+                st.markdown('No level 4 TDWG regions was found')
+   
 
        # if (eco_regions_flow_found_df.size != 0): 
         #    panel_flow_comment(eco_regions_flow_found_df)
 
 
 def main():
-    hc_sidebar()
+    debug_mode = hc_sidebar()
     hc_header()
-    hc_body()
+    hc_body(debug_mode)
+  
 
 
 # Run main()
