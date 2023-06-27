@@ -314,7 +314,7 @@ def hc_body(debug_mode):
         ["1️⃣ Ask GBIF ", "▶️ then ask FLOW"])
     with tab1:
         # GBIF
-        explain_line = ":point_right: *We searched only occurrences with precise location coordinates in the GBIF database. \
+        explain_line = ":point_right: *We search only occurrences with precise location coordinates in the GBIF database. \
         From them, we get the TDWG regions and eco-regions. The Genus list is from an extract of the FLOW database.* "
         st.markdown(explain_line)
 
