@@ -254,41 +254,36 @@ def hc_header():
 
     with col1:
         with st.expander(label = "About GBIF") :
+            image = Image.open('images/gbif-standard-logo-green.png')
+            st.image(image, width=100)
             st.markdown("GBIF—the Global Biodiversity Information Facility—is an international network and data infrastructure \
                     funded by the world's governments and aimed at providing anyone, anywhere, open access to data about all \
                     types of life on Earth : https://www.gbif.org/fr/, https://www.gbif.org/ ")
 
     with col2:
         with st.expander(label = 'About FLOW'): 
+            image = Image.open('images/logoFLOW.png')
+            st.image(image)
             st.markdown("Fulgoromorpha Lists On the Web : A knowledge and a taxonomy database dedicated to \
-                        planthoppers (Insecta, Hemiptera, Fulgoromorpha, Fulgoroidea, https://flow.hemiptera-databases.org/flow/?&lang=fr, https://flow.hemiptera-databases.org/flow/?&lang=en") 
+                        planthoppers (Insecta, Hemiptera, Fulgoromorpha, Fulgoroidea) :  https://flow.hemiptera-databases.org/flow/?&lang=fr, https://flow.hemiptera-databases.org/flow/?&lang=en") 
   
 
     with col3:
         with st.expander(label = 'About TDWG'): 
+            image = Image.open('images/TDWG-Logo_Short-Form.png')
+            st.image(image,width=100)
             st.markdown("Historically known as the Taxonomic Databases Working Group, today’s Biodiversity Information Standards \
                         (TDWG) is a not-for-profit, scientific and educational association formed to establish international \
                         collaboration among the creators, managers and users of biodiversity information and to promote the wider \
-                        and more effective dissemination and sharing of knowledge about the world’s heritage of biological organisms, https://www.tdwg.org/")
+                        and more effective dissemination and sharing of knowledge about the world’s heritage of biological organisms : https://www.tdwg.org/")
 
     with col4:
         with st.expander(label='About eco-regions') :
+            image = Image.open('images/300px-Wwfeco.png')
+            st.image(image)
             st.markdown("They are biogeographic classifications from the WWF. An ecoregion is a recurring pattern of ecosystems associated with characteristic combinations of soil and \
-                        landform that characterise that region, https://fr.wikipedia.org/wiki/%C3%89cor%C3%A9gion, https://en.wikipedia.org/wiki/Ecoregion")
+                        landform that characterise that region :  https://fr.wikipedia.org/wiki/%C3%89cor%C3%A9gion, https://en.wikipedia.org/wiki/Ecoregion")
 
-   # https://www.gbif.org/fr/
-   # https://www.gbif.org/ 
-
-   # https://flow.hemiptera-databases.org/flow/?&lang=en
-   # https://flow.hemiptera-databases.org/flow/?&lang=fr
-
-    #https://www.tdwg.org/ 
-    #
-
-    #https://en.wikipedia.org/wiki/Ecoregion 
-    #https://fr.wikipedia.org/wiki/%C3%89cor%C3%A9gion
-    #st.image()
- 
     st.write('-----------------')
 
 
@@ -316,10 +311,16 @@ def hc_sidebar():
 
 def hc_body(debug_mode):
     tab1, tab2 = st.tabs(
-        ["Ask GBIF ", "▶️ then ask FLOW"])
+        ["1️⃣ Ask GBIF ", "▶️ then ask FLOW"])
     with tab1:
+        # GBIF
+        explain_line = ":point_right: *We searched only occurrences with precise location coordinates in the GBIF database. \
+        From them, we get the TDWG regions and eco-regions. The Genus list is from an extract of the FLOW database.* "
+        st.markdown(explain_line)
+
         res = panel_choix_genus(debug_mode)
-        print(res)
+        if (debug_mode) : 
+            st.write(res)
         st.session_state.list_species = list(set(flow_df[flow_df['genus'] == st.session_state['genus']]['species'].values))
         eco_regions_gbif_found_df, tdwg_regions_gbif_found_df, geo_gbif_occ_df = \
             panel_gbif_choix_species(debug_mode)
@@ -327,22 +328,24 @@ def hc_body(debug_mode):
             panel_gbif_comment(geo_gbif_occ_df, eco_regions_gbif_found_df, tdwg_regions_gbif_found_df)
             show_gbif_map(tdwg_regions_gbif_found_df, eco_regions_gbif_found_df, geo_gbif_occ_df)
     with tab2:
-        ### Ici 
+        ### Flow
+        explain_line = ":point_right: *All documented occurrences in FLOW are associated with the TDWG area mentioned in the reference articles. \
+             The corresponding eco-regions are the ones intersecting with these TDWG areas. For generic eco-regions such Lake or Ice,  \
+            we can also see on the map all their locations.*"
+        st.markdown(explain_line)
         if 'species' not in st.session_state : 
               st.markdown("No species selected yet")
         else : 
             sp = st.session_state['species']
-            line = "Locations of occurences of :red["+  sp + "] documented in FLOW (TDWG)"
+        
+            line = "Here are the locations of occurences of :red["+  sp + "] documented in FLOW (TDWG)"
             st.markdown(line)
+           
             tdwg_regions_flow, eco_regions_list, flow_occ_df = panel_flow_choix_species(debug_mode)
             if (len(tdwg_regions_flow)!=0):
                 show_flow_map(tdwg_regions_flow, eco_regions_list)
             else : 
                 st.markdown('No level 4 TDWG region was found')
-   
-
-       # if (eco_regions_flow_found_df.size != 0): 
-        #    panel_flow_comment(eco_regions_flow_found_df)
 
 
 def main():
