@@ -67,11 +67,11 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
         geo_json = folium.GeoJson(data=geo_json,
                                   style_function=lambda x: {'fillColor': '#99adc2', 
                                                             'color': '#000000',
-                                                            'fillOpacity': 0.5,
-                                                            'weight': 1},
+                                                            'fillOpacity': 0.3,
+                                                            'weight': 0.5},
                                   highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
-                                                                'fillOpacity': 0.50,
+                                                                'fillOpacity': 0.10,
                                                                 'weight': 0.1},
                               
                                   )
@@ -90,11 +90,11 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
         geo_json = folium.GeoJson(data=geo_json,
                                   style_function=lambda x: {'fillColor': '#17a86c',
                                                             'color': '#000000',
-                                                            'fillOpacity': 0.5,
-                                                            'weight': 1},
+                                                            'fillOpacity': 0.3,
+                                                            'weight': 0.5},
                                   highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
-                                                                'fillOpacity': 0.50,
+                                                                'fillOpacity': 0.1,
                                                                 'weight': 0.1})
     # Add popup with line description
         folium.Popup(r.ECO_NAME).add_to(geo_json)

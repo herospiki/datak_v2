@@ -220,11 +220,11 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
             tdwg_geo = folium.GeoJson(row.geometry,
                                   style_function=lambda x: {'fillColor': '#99adc2', 
                                                             'color': '#000000',
-                                                            'fillOpacity': 0.5,
-                                                            'weight': 1},
+                                                            'fillOpacity': 0.3,
+                                                            'weight': 0.5},
                                   highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
-                                                                'fillOpacity': 0.50,
+                                                                'fillOpacity': 0.10,
                                                                 'weight': 0.1},
                               
                                   )
@@ -240,11 +240,11 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
                            name=row.ECO_NAME,
                            style_function=lambda x: {'fillColor': '#17a86c',
                                                             'color': '#000000',
-                                                            'fillOpacity': 0.5,
-                                                            'weight': 1},
+                                                            'fillOpacity': 0.3,
+                                                            'weight': 0.5},
                             highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
-                                                                'fillOpacity': 0.50,
+                                                                'fillOpacity': 0.10,
                                                                 'weight': 0.1}
                                                         )
             Popup(row.ECO_NAME).add_to(eco_geo)
