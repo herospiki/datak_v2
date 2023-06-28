@@ -84,6 +84,7 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
 # Plot eco_regions
     for i, r in eco_regions_df.loc[eco_regions_df['ECO_ID'].isin(eco_id_list)].iterrows():
         # Convert the Polygon or LineString to geoJSON format
+        lon, lat = random_point_in_bounds(Polygon(r['geometry']))
         geo_json = gpd.GeoSeries(r['geometry']).simplify(
             tolerance=0.000001).to_json()
         geo_json = folium.GeoJson(data=geo_json,
@@ -100,9 +101,9 @@ def show_map(tdwg_data, eco_regions_df, level4_cod_values, eco_id_list):
 
     # Add the feature to the appropriate layer
         geo_json.add_to(eco_regions_layer)
-        # x, y = random_points_in_bounds(polygon)
 
-    m = folium.Map(location=[0, 0], zoom_start=2)
+
+    m = folium.Map(location=[lat, lon], zoom_start=4)
 
     # Add all feature layers to the map
     tdwg_layer.add_to(m)

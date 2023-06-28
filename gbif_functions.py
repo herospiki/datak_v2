@@ -1,5 +1,4 @@
 import random
-
 import branca.colormap as cm
 import folium
 import geopandas as gpd
@@ -150,6 +149,14 @@ def get_map_center(points):
         # Return a random element
         random_center = random.choice(lat_lon_list)
         return random_center[1], random_center[0]
+    
+def get_random_center(points):
+    # Extract (latitude, longitude) tuples from dataframe
+    lat_lon_list = list(
+        zip(points['decimalLatitude'].tolist(), points['decimalLongitude'].tolist()))
+    # Return a random element
+    random_center = random.choice(lat_lon_list)
+    return random_center[1], random_center[0]
 
 # Le mieux est de laisser l'année de côté pour le moment, et plutôt de compter les occurrences
 # suivant le basisOfrecord une fois qu'on a les zones
@@ -172,13 +179,18 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
     tdwg_regions = tdwg_regions_gbif_found_df[['Level_4_Na','Level4_cod','geometry']]
    
     # centrer la carte d'emblée
-    lat,long =  get_map_center(geo_occ_df)
+    #lat,long =  get_map_center(geo_occ_df)
+    long,lat =  get_random_center(geo_occ_df)
+    print('CENTER MAP')
+    print(lat)
+    print(long)
     print(geo_occ_df['basisOfRecord'].unique())
 
     geo_occ_df['year'] = geo_occ_df['year'].fillna('year unknown')  # Année non documentée
     # lat,long =  get_map_center(geo_occ_df)
    # min_year = geo_occ_df['year'].min()
     #max_year = geo_occ_df['year'].max()
+   
     map = folium.Map(location=[lat, long], zoom_start=4)
     #map = folium.Map(location=[0, 0], zoom_start=2)
 
@@ -191,7 +203,6 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
     #  Occurrences 
      
     for row in geo_occ_df.itertuples(index=False):
-    
         folium.Circle(radius=200,
                     location=(row.decimalLatitude, row.decimalLongitude),
                     popup=Popup(row.species + " "+row.country + " " + row.basisOfRecord + " "+ str(row.year)),
@@ -205,37 +216,36 @@ def create_map_for_gbif_occurrences(tdwg_regions_gbif_found_df, eco_regions_foun
     # Plot tdwg
    
     for i,row in tdwg_regions.iterrows():
-        print(row)
-     
-        tdwg_geo = folium.GeoJson(row.geometry,
-                                  style_function=lambda x: {'fillColor': '#99adc2',
+        if (row.geometry != None) :     
+            tdwg_geo = folium.GeoJson(row.geometry,
+                                  style_function=lambda x: {'fillColor': '#99adc2', 
                                                             'color': '#000000',
                                                             'fillOpacity': 0.5,
                                                             'weight': 1},
                                   highlight_function=lambda x: {'fillColor': '#ececec',
                                                                 'color': '#000000',
                                                                 'fillOpacity': 0.50,
-                                                                'weight': 0.1}
+                                                                'weight': 0.1},
                               
                                   )
     # Add popup with line description
-        Popup(row.Level_4_Na).add_to(tdwg_geo)
+            Popup(row.Level_4_Na).add_to(tdwg_geo)
 
         # Add the feature to the appropriate layer
-        tdwg_geo.add_to(tdwg_layer)
+            tdwg_geo.add_to(tdwg_layer)
         
     for row in eco_regions_found_df.itertuples():
         if row.geometry != None:
             eco_geo = folium.GeoJson(row.geometry, 
                            name=row.ECO_NAME,
                            style_function=lambda x: {'fillColor': '#17a86c',
-                                                    'color': '#000000',
-                                                    'fillOpacity': 0.5,
-                                                    'weight': 1},
+                                                            'color': '#000000',
+                                                            'fillOpacity': 0.5,
+                                                            'weight': 1},
                             highlight_function=lambda x: {'fillColor': '#ececec',
-                                                        'color': '#000000',
-                                                        'fillOpacity': 0.50,
-                                                        'weight': 0.1}
+                                                                'color': '#000000',
+                                                                'fillOpacity': 0.50,
+                                                                'weight': 0.1}
                                                         )
             Popup(row.ECO_NAME).add_to(eco_geo)
 
