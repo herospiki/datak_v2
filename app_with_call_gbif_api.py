@@ -127,7 +127,10 @@ def panel_gbif_choix_species(debug_mode):
             if 'species' not in st.session_state :
                 idx = 0
             else :
-                idx = st.session_state.list_species.index(st.session_state['species'])
+                try :
+                    idx = st.session_state.list_species.index(st.session_state['species'])
+                except (ValueError): 
+                    idx = 0
             if debug_mode :
                 st.write(st.session_state.list_species)
                 st.write(idx)
