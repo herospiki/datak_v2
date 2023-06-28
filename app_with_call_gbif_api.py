@@ -247,13 +247,13 @@ def show_flow_map(level4_cod_values, eco_id_list):
 
 
 def hc_header():
-    st.header('Animalia | Arthropoda | Insecta | Hemiptera ')
-    st.subheader('Auchenorrhyncha | Fulgoromorpha | Fulgoroidea | Cixiidae', help='https://fr.wikipedia.org/wiki/Cixiidae')
+    st.subheader('Animalia | Arthropoda | Insecta | Hemiptera ')
+    st.header('Auchenorrhyncha | **:green[Fulgoromorpha]** | Fulgoroidea | Cixiidae', help='https://fr.wikipedia.org/wiki/Cixiidae')
     st.write('-----------------')
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        with st.expander(label = "About GBIF") :
+        with st.expander(label = "About **GBIF**") :
             image = Image.open('images/gbif-standard-logo-green.png')
             st.image(image, width=100)
             st.markdown("GBIF—the Global Biodiversity Information Facility—is an international network and data infrastructure \
@@ -261,7 +261,7 @@ def hc_header():
                     types of life on Earth : https://www.gbif.org/fr/, https://www.gbif.org/ ")
 
     with col2:
-        with st.expander(label = 'About FLOW'): 
+        with st.expander(label = 'About **FLOW**'): 
             image = Image.open('images/logoFLOW.png')
             st.image(image)
             st.markdown("Fulgoromorpha Lists On the Web : A knowledge and a taxonomy database dedicated to \
@@ -269,7 +269,7 @@ def hc_header():
   
 
     with col3:
-        with st.expander(label = 'About TDWG'): 
+        with st.expander(label = 'About **TDWG**'): 
             image = Image.open('images/TDWG-Logo_Short-Form.png')
             st.image(image,width=100)
             st.markdown("Historically known as the Taxonomic Databases Working Group, today’s Biodiversity Information Standards \
@@ -278,7 +278,7 @@ def hc_header():
                         and more effective dissemination and sharing of knowledge about the world’s heritage of biological organisms : https://www.tdwg.org/")
 
     with col4:
-        with st.expander(label='About eco-regions') :
+        with st.expander(label='About **WWF eco-regions**') :
             image = Image.open('images/300px-Wwfeco.png')
             st.image(image)
             st.markdown("They are biogeographic classifications from the WWF. An ecoregion is a recurring pattern of ecosystems associated with characteristic combinations of soil and \
