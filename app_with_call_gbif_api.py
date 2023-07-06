@@ -175,7 +175,7 @@ def panel_flow_choix_species(debug_mode):
     return tdwg_regions_flow, eco_regions_list, flow_occ_df
 
 
-def panel_gbif_comment(gbif_occ_df,eco_regions_gbif_found_df, tdwg_regions_gbif_found_df):
+def panel_gbif_comment(gbif_occ_df,eco_regions_gbif_found_df, tdwg_regions_gbif_found_df, debug_mode):
 
     heatmap_data = mf.build_heatmap(eco_regions_gbif_found_df[['key','basisOfRecord','ECO_NAME']],
                                     tdwg_regions_gbif_found_df[['key','basisOfRecord','Level_4_Na']])
@@ -184,7 +184,8 @@ def panel_gbif_comment(gbif_occ_df,eco_regions_gbif_found_df, tdwg_regions_gbif_
     # On récupère les eco-régions
     eco_regions_found_data = eco_regions_gbif_found_df['ECO_NAME'].value_counts().reset_index(). \
                         rename(columns={'index': 'Name', 'ECO_NAME': 'Number of occurrences'})
-    
+    if debug_mode :
+        st.dataframe(eco_regions_found_data)
     line1 = st.session_state['species'] + " has been found "+ str(len(gbif_occ_df)) + " times in the GBIF database"
    # line2 = f"They have been found in {len(eco_regions_found_data['Name'])} eco-region(s)"
    # line3 = eco_regions_found_data['Name'].unique()
@@ -195,7 +196,7 @@ def panel_gbif_comment(gbif_occ_df,eco_regions_gbif_found_df, tdwg_regions_gbif_
     
     #tdwg_line2 = f"They have been found in {len(tdwg_regions_gbif_found_data['Name'])} TDWG region(s)"
     #tdwg_line3 = tdwg_regions_gbif_found_data['Name'].unique()
-
+ 
     line2 = f"They have been found in {len(eco_regions_found_data['Name'])} eco-region(s) corresponding \
     to {len(tdwg_regions_gbif_found_data['Name'])} TDWG region(s)"
 
@@ -328,7 +329,7 @@ def hc_body(debug_mode):
         eco_regions_gbif_found_df, tdwg_regions_gbif_found_df, geo_gbif_occ_df = \
             panel_gbif_choix_species(debug_mode)
         if (eco_regions_gbif_found_df.size != 0) : 
-            panel_gbif_comment(geo_gbif_occ_df, eco_regions_gbif_found_df, tdwg_regions_gbif_found_df)
+            panel_gbif_comment(geo_gbif_occ_df, eco_regions_gbif_found_df, tdwg_regions_gbif_found_df, debug_mode)
             show_gbif_map(tdwg_regions_gbif_found_df, eco_regions_gbif_found_df, geo_gbif_occ_df)
     with tab2:
         ### Flow
